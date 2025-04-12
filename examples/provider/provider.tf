@@ -1,3 +1,3 @@
-provider "scaffolding" {
+provider "netboxdns" {
   # example configuration here
 }

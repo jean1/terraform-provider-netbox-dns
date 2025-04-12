@@ -9,8 +9,8 @@ import (
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
-	"github.com/hashicorp/terraform-provider-scaffolding-framework/internal/provider"
 )
+	// "github.com/jean1/terraform-provider-netbox-dns/internal/provider"
 
 var (
 	// these will be set by the goreleaser configuration
@@ -31,7 +31,7 @@ func main() {
 		// TODO: Update this string with the published name of your provider.
 		// Also update the tfplugindocs generate command to either remove the
 		// -provider-name flag or set its value to the updated provider name.
-		Address: "registry.terraform.io/hashicorp/scaffolding",
+		Address: "registry.terraform.io/jean/netboxdns",
 		Debug:   debug,
 	}
 
