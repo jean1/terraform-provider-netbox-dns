@@ -170,15 +170,13 @@ func (p *NetboxDNSProvider) Configure(ctx context.Context, req provider.Configur
 
 func (p *NetboxDNSProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
-		NewSessionResource,
+		NewRecordResource,
 	}
 }
 
 func (p *NetboxDNSProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
-		NewSessionDataSource,
-		NewSessionsDataSource,
-		NewPeerGroupDataSource,
+		NewRecordDataSource,
 	}
 }
 
