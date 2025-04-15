@@ -110,7 +110,7 @@ func (r *ZoneResource) Schema(ctx context.Context, req resource.SchemaRequest, r
                                 Required: true,
 				MarkdownDescription: "Primary nameserver",
 				Attributes: (*NestedNameserver)(nil).SchemaAttributes(),
-			}
+			},
 			"soa_rname": schema.StringAttribute{
                                 Required: true,
 				MarkdownDescription: `zone administrator email address`,

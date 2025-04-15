@@ -24,14 +24,14 @@ type NameserverDataSource struct {
 
 type NameserverDataSourceModel struct {
 	ID          types.Int64  `tfsdk:"id"`
-	Name        types.String `tfsdk:"name"`
 	Description types.String `tfsdk:"description"`
+	Name        types.String `tfsdk:"name"`
 }
 
-func (m *NameserverDataSourceModel) FillFromAPIModel(ctx context.Context, resp *client.Nameserver, diags diag.Diagnostics) {
+func (m *NameserverDataSourceModel) FillFromAPIModel(ctx context.Context, resp *client.NameServer, diags diag.Diagnostics) {
 	m.ID = maybeInt64Value(resp.Id)
-	m.Name = maybeStringValue(resp.Name)
 	m.Description = maybeStringValue(resp.Description)
+	m.Name = maybeStringValue(resp.Name)
 }
 
 func (d *NameserverDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -43,10 +43,10 @@ var nameserverDataSchema = map[string]schema.Attribute{
 		MarkdownDescription: "ID of the resource in Netbox to use for lookup",
 		Required:            true,
 	},
-	"name": schema.StringAttribute{
+	"description": schema.StringAttribute{
 		Computed: true,
 	},
-	"description": schema.StringAttribute{
+	"name": schema.StringAttribute{
 		Computed: true,
 	},
 }

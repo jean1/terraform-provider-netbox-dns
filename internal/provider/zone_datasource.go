@@ -99,7 +99,7 @@ var zoneDataSchema = map[string]schema.Attribute{
 		MarkdownDescription: "Primary nameserver",
 		Computed:   true,
 		Attributes: (*NestedNameserver)(nil).SchemaAttributes(),
-	}
+	},
 	"soa_rname": schema.StringAttribute{
 		Computed:            true,
 		MarkdownDescription: `zone administrator email address`,

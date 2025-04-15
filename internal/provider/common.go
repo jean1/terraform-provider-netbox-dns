@@ -67,7 +67,7 @@ func (tfo NestedView) ToAPIModel() client.BriefView {
         }
 }
 
-func NestedView(resp *client.BriefView) *NestedView {
+func NestedViewFromAPI(resp *client.BriefView) *NestedView {
         if resp == nil {
                 return nil
         }
