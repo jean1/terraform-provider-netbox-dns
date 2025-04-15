@@ -9,8 +9,8 @@ import (
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
+	"github.com/jean1/terraform-provider-netbox-dns/internal/provider"
 )
-	// "github.com/jean1/terraform-provider-netbox-dns/internal/provider"
 
 var (
 	// these will be set by the goreleaser configuration
@@ -28,7 +28,7 @@ func main() {
 	flag.Parse()
 
 	opts := providerserver.ServeOpts{
-		Address: "registry.terraform.io/jean/netboxdns",
+		// Address: "registry.terraform.io/jean1/netboxdns",
 		Debug:   debug,
 	}
 
