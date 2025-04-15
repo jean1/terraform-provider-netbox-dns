@@ -6,6 +6,7 @@ package provider
 import (
 	"context"
 	"crypto/tls"
+	 _ "embed"
 	"fmt"
 	"net/http"
 
@@ -20,6 +21,7 @@ import (
 
 // Ensure NetboxDNSProvider satisfies various provider interfaces.
 var _ provider.Provider = &NetboxDNSProvider{}
+
 var (
 	//go:embed provider.md
 	providerDocs string
