@@ -1,4 +1,4 @@
-module github.com/hashicorp/terraform-provider-netbox-dns
+module github.com/jean1/terraform-provider-netbox-dns
 
 go 1.23.7
 
