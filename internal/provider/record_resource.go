@@ -85,7 +85,7 @@ func (r *RecordResource) Schema(ctx context.Context, req resource.SchemaRequest,
 			"status": schema.StringAttribute{
 				MarkdownDescription: "Record status (active or inactive)",
 				Optional:            true,
-				Validators: []validator.String{ // FIXME
+				Validators: []validator.String{
 					stringvalidator.OneOf(
 						string(client.RecordStatusActive),
 						string(client.RecordStatusInactive),
