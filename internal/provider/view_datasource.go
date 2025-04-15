@@ -30,7 +30,7 @@ type ViewDataSourceModel struct {
 
 func (m *ViewDataSourceModel) FillFromAPIModel(ctx context.Context, resp *client.View, diags diag.Diagnostics) {
 	m.ID = maybeInt64Value(resp.Id)
-	m.Name = maybeStringValue(resp.Name)
+	m.Name = maybeStringValue(&resp.Name)
 	m.Description = maybeStringValue(resp.Description)
 }
 

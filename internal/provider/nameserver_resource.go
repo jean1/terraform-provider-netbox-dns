@@ -9,12 +9,14 @@ import (
 	"net/http"
 
 	"github.com/jean1/terraform-provider-netbox-dns/client"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
@@ -39,6 +41,18 @@ type NameserverResourceModel struct {
 	Description types.String `tfsdk:"description"`
 }
 
+func (m *NameserverResourceModel) ToAPIModel(ctx context.Context, diags diag.Diagnostics) client.NameServerRequest {
+	p := client.NameServerRequest{}
+	p.Name = *m.Name.ValueStringPointer()
+	p.Description = m.Description.ValueStringPointer()
+	return p
+}
+func (m *NameserverResourceModel) FillFromAPIModel(ctx context.Context, resp *client.NameServer, diags diag.Diagnostics) {
+        m.ID = maybeInt64Value(resp.Id)
+        m.Name = maybeStringValue(&resp.Name)
+        m.Description = maybeStringValue(resp.Description)
+}
+
 func (r *NameserverResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_nameserver"
 }
@@ -53,7 +67,7 @@ func (r *NameserverResource) Schema(ctx context.Context, req resource.SchemaRequ
 				Computed:            true,
 				MarkdownDescription: "Nameserver id in NetBox",
 				PlanModifiers: []planmodifier.Int64{
-					stringplanmodifier.UseStateForUnknown(),
+					int64planmodifier.UseStateForUnknown(),
 				},
 			},
 			"name": schema.StringAttribute{

@@ -31,7 +31,7 @@ type NameserverDataSourceModel struct {
 func (m *NameserverDataSourceModel) FillFromAPIModel(ctx context.Context, resp *client.NameServer, diags diag.Diagnostics) {
 	m.ID = maybeInt64Value(resp.Id)
 	m.Description = maybeStringValue(resp.Description)
-	m.Name = maybeStringValue(resp.Name)
+	m.Name = maybeStringValue(&resp.Name)
 }
 
 func (d *NameserverDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {

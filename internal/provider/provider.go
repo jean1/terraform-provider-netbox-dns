@@ -6,7 +6,7 @@ package provider
 import (
 	"context"
 	"crypto/tls"
-
+	"fmt"
 	"net/http"
 
 	"github.com/jean1/terraform-provider-netbox-dns/client"
@@ -20,10 +20,10 @@ import (
 
 // Ensure NetboxDNSProvider satisfies various provider interfaces.
 var _ provider.Provider = &NetboxDNSProvider{}
-
-
-
-
+var (
+	//go:embed provider.md
+	providerDocs string
+)
 
 
 // NetboxDNSProvider defines the provider implementation.

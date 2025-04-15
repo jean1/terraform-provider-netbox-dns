@@ -23,39 +23,45 @@ type ZoneDataSource struct {
 }
 
 type ZoneDataSourceModel struct {
-	ID            types.Int64        `tfsdk:"id"`
-	View          *NestedView        `tfsdk:"view"`
-	Name          types.String       `tfsdk:"name"`
-	Status        types.String       `tfsdk:"status"`
-	Nameservers   []types.Int64      `tfsdk:"nameserver_ids"`
-	DefaultTTL    types.Int64        `tfsdk:"default_ttl"`
-	SOATTL        types.Int64        `tfsdk:"soa_ttl"`
-	SOAMName      *NestedNameserver  `tfsdk:"soa_mname"`
-	SOARName      types.String       `tfsdk:"soa_rname"`
-	SOASerial     types.Int64        `tfsdk:"soa_serial"`
-	SOARefresh    types.Int64        `tfsdk:"soa_refresh"`
-	SOARetry      types.Int64        `tfsdk:"soa_retry"`
-	SOAExpire     types.Int64        `tfsdk:"soa_expire"`
-	SOASerialAuto types.String       `tfsdk:"soa_serial_auto"`
-	Description   types.String       `tfsdk:"description"`
+	ID               types.Int64        `tfsdk:"id"`
+	View             *NestedView        `tfsdk:"view"`
+	Name             types.String       `tfsdk:"name"`
+	Status           types.String       `tfsdk:"status"`
+	NameserversIDs   []types.Int64      `tfsdk:"nameserver_ids"`
+	DefaultTTL       types.Int32        `tfsdk:"default_ttl"`
+	SOATTL           types.Int32        `tfsdk:"soa_ttl"`
+	SOAMName         *NestedNameserver  `tfsdk:"soa_mname"`
+	SOARName         types.String       `tfsdk:"soa_rname"`
+	SOASerial        types.Int32        `tfsdk:"soa_serial"`
+	SOARefresh       types.Int32        `tfsdk:"soa_refresh"`
+	SOARetry         types.Int32        `tfsdk:"soa_retry"`
+	SOAExpire        types.Int32        `tfsdk:"soa_expire"`
+	SOASerialAuto    types.Bool         `tfsdk:"soa_serial_auto"`
+	Description      types.String       `tfsdk:"description"`
 }
 
 func (m *ZoneDataSourceModel) FillFromAPIModel(ctx context.Context, resp *client.Zone, diags diag.Diagnostics) {
 	m.ID = maybeInt64Value(resp.Id)
-	m.View = NestedViewFromAPI(&resp.View)
-	m.Name = maybeStringValue(resp.Name)
-	m.Status = maybeStringValue(resp.Status)
-	for _, id := range *resp.Nameservers {
-		m.Nameservers = append(m.Nameservers, types.Int64Value(int64(id)))
+	m.View = NestedViewFromAPI(resp.View)
+	m.Name = maybeStringValue(&resp.Name)
+	m.Status = maybeStringValue((*string)(resp.Status))
+
+	// Zone struct, field Nameservers *[]BriefNameServer
+	// type BriefNameServer struct { Id          *int
+	if resp.Nameservers != nil {
+		for _, element := range *resp.Nameservers {
+			m.NameserversIDs = append(m.NameserversIDs, types.Int64Value( int64(*(element.Id)) ) )
+		}
 	}
-	m.DefaultTTL  = maybeInt64Value(resp.DefaultTtl)
-	m.SOATTL  = maybeInt64Value(resp.SoaTtl)
-	m.SOAMName = NestedNameserver(&resp.SoaMname)
+
+	m.DefaultTTL  = maybeInt32Value(resp.DefaultTtl)
+	m.SOATTL  = maybeInt32Value(resp.SoaTtl)
+	m.SOAMName = NestedNameserverFromAPI(resp.SoaMname)
 	m.SOARName = maybeStringValue(resp.SoaRname)
-	m.SOASerial  = maybeInt64Value(resp.SoaSerial)
-	m.SOARefresh  = maybeInt64Value(resp.SoaRefresh)
-	m.SOARetry  = maybeInt64Value(resp.SoaRetry)
-	m.SOAExpire  = maybeInt64Value(resp.SoaExpire)
+	m.SOASerial  = maybeInt32Value(resp.SoaSerial)
+	m.SOARefresh  = maybeInt32Value(resp.SoaRefresh)
+	m.SOARetry  = maybeInt32Value(resp.SoaRetry)
+	m.SOAExpire  = maybeInt32Value(resp.SoaExpire)
 	m.SOASerialAuto = maybeBoolValue(resp.SoaSerialAuto)
 	m.Description = maybeStringValue(resp.Description)
 }

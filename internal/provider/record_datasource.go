@@ -30,20 +30,18 @@ type RecordDataSourceModel struct {
 	Value       types.String `tfsdk:"value"`
 	Status      types.String `tfsdk:"status"`
 	Description types.String `tfsdk:"description"`
-	Comments    types.String `tfsdk:"comments"`
 	TTL         types.Int64 `tfsdk:"ttl"`
 }
 
 func (m *RecordDataSourceModel) FillFromAPIModel(ctx context.Context, resp *client.Record, diags diag.Diagnostics) {
 	m.ID = maybeInt64Value(resp.Id)
-	m.Name = maybeStringValue(resp.Name)
+	m.Name = maybeStringValue(&(resp.Name))
 	m.Zone = NestedZoneFromAPI(resp.Zone)
-	m.Type = maybeStringValue(resp.Type)
-	m.Value = maybeStringValue(resp.Value)
-	m.Status = maybeStringValue(resp.Status)
+	m.Type = maybeStringValue((*string)(&resp.Type))
+	m.Value = maybeStringValue(&resp.Value)
+	m.Status = maybeStringValue((*string)(resp.Status))
 	m.Description = maybeStringValue(resp.Description)
-	m.Comments = maybeStringValue(resp.Comments)
-	m.TTL = maybeInt64Value(resp.TTL)
+	m.TTL = maybeInt64Value(resp.Ttl)
 }
 
 func (d *RecordDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {

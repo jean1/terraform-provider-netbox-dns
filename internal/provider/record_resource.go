@@ -15,8 +15,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -35,18 +39,44 @@ type RecordResource struct {
 // RecordResourceModel describes the resource data model.
 type RecordResourceModel struct {
 	ID          types.Int64 `tfsdk:"id"`
-	
 	Name        types.String `tfsdk:"name"`
 	ZoneID      types.Int64 `tfsdk:"zone_id"`
 	Type        types.String `tfsdk:"type"`
 	Value       types.String `tfsdk:"value"`
-
 	Status      types.String `tfsdk:"status"`
-
 	Description types.String `tfsdk:"description"`
-	Comments    types.String `tfsdk:"comments"`
 	TTL         types.Int64 `tfsdk:"ttl"`
+}
 
+func (m *RecordResourceModel) ToAPIModel(ctx context.Context, diags diag.Diagnostics) client.WritableRecordRequest {
+	p := client.WritableRecordRequest{}
+
+	p.Name = m.Name.ValueString()
+	p.Zone = *fromInt64Value(m.ZoneID)
+
+	recordtype := client.WritableRecordRequestType(m.Type.ValueString())
+	p.Type = recordtype
+
+	p.Value = m.Value.ValueString()
+	if !m.Status.IsNull() {
+		recordstatus := client.WritableRecordRequestStatus(m.Status.ValueString())
+		p.Status = &recordstatus
+	}
+	p.Description = m.Description.ValueStringPointer()
+	p.Ttl = fromInt64Value(m.TTL)
+	
+	return p
+}
+
+func (m *RecordResourceModel) FillFromAPIModel(ctx context.Context, resp *client.Record, diags diag.Diagnostics) {
+        m.ID = maybeInt64Value(resp.Id)
+        m.Name = maybeStringValue(&resp.Name)
+	m.ZoneID = maybeInt64Value(resp.Zone.Id)
+	m.Type = maybeStringValue((*string)(&resp.Type))
+        m.Value = maybeStringValue(&resp.Value)
+	m.Status = maybeStringValue((*string)(resp.Status))
+        m.Description = maybeStringValue(resp.Description)
+	m.TTL = maybeInt64Value(resp.Ttl)
 }
 
 func (r *RecordResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -63,7 +93,7 @@ func (r *RecordResource) Schema(ctx context.Context, req resource.SchemaRequest,
 				Computed:            true,
 				MarkdownDescription: "Record id in NetBox",
 				PlanModifiers: []planmodifier.Int64{
-					stringplanmodifier.UseStateForUnknown(),
+					int64planmodifier.UseStateForUnknown(),
 				},
 			},
 			"name": schema.StringAttribute{
@@ -93,10 +123,6 @@ func (r *RecordResource) Schema(ctx context.Context, req resource.SchemaRequest,
 				},
 			},
 			"description": schema.StringAttribute{
-				MarkdownDescription: "Record description",
-				Optional:            true,
-			},
-			"comments": schema.StringAttribute{
 				MarkdownDescription: "Record description",
 				Optional:            true,
 			},

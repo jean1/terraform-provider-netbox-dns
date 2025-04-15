@@ -15,8 +15,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -39,6 +41,20 @@ type ViewResourceModel struct {
 	Description   types.String       `tfsdk:"description"`
 }
 
+func (m *ViewResourceModel) ToAPIModel(ctx context.Context, diags diag.Diagnostics) client.ViewRequest {
+	p := client.ViewRequest{}
+	p.Name = *m.Name.ValueStringPointer()
+	p.Description = m.Description.ValueStringPointer()
+
+	return p
+}
+
+func (m *ViewResourceModel) FillFromAPIModel(ctx context.Context, resp *client.View, diags diag.Diagnostics) {
+        m.ID = maybeInt64Value(resp.Id)
+        m.Name = maybeStringValue(&resp.Name)
+        m.Description = maybeStringValue(resp.Description)
+}
+
 func (r *ViewResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_view"
 }
@@ -53,7 +69,7 @@ func (r *ViewResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				Computed:            true,
 				MarkdownDescription: "View id in NetBox",
 				PlanModifiers: []planmodifier.Int64{
-					stringplanmodifier.UseStateForUnknown(),
+					int64planmodifier.UseStateForUnknown(),
 				},
 			},
 			"name": schema.StringAttribute{
