@@ -6,19 +6,18 @@ package provider
 import (
 	"context"
 	"fmt"
-	"net/http"
-
-	"github.com/jean1/terraform-provider-netbox-dns/client"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/jean1/terraform-provider-netbox-dns/client"
+	"net/http"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -36,14 +35,14 @@ type RecordResource struct {
 
 // RecordResourceModel describes the resource data model.
 type RecordResourceModel struct {
-	ID          types.Int64 `tfsdk:"id"`
+	ID          types.Int64  `tfsdk:"id"`
 	Name        types.String `tfsdk:"name"`
-	ZoneID      types.Int64 `tfsdk:"zone_id"`
+	ZoneID      types.Int64  `tfsdk:"zone_id"`
 	Type        types.String `tfsdk:"type"`
 	Value       types.String `tfsdk:"value"`
 	Status      types.String `tfsdk:"status"`
 	Description types.String `tfsdk:"description"`
-	TTL         types.Int64 `tfsdk:"ttl"`
+	TTL         types.Int64  `tfsdk:"ttl"`
 }
 
 func (m *RecordResourceModel) ToAPIModel(ctx context.Context, diags diag.Diagnostics) client.WritableRecordRequest {
@@ -62,18 +61,18 @@ func (m *RecordResourceModel) ToAPIModel(ctx context.Context, diags diag.Diagnos
 	}
 	p.Description = m.Description.ValueStringPointer()
 	p.Ttl = fromInt64Value(m.TTL)
-	
+
 	return p
 }
 
 func (m *RecordResourceModel) FillFromAPIModel(ctx context.Context, resp *client.Record, diags diag.Diagnostics) {
-        m.ID = maybeInt64Value(resp.Id)
-        m.Name = maybeStringValue(&resp.Name)
+	m.ID = maybeInt64Value(resp.Id)
+	m.Name = maybeStringValue(&resp.Name)
 	m.ZoneID = maybeInt64Value(resp.Zone.Id)
 	m.Type = maybeStringValue((*string)(&resp.Type))
-        m.Value = maybeStringValue(&resp.Value)
+	m.Value = maybeStringValue(&resp.Value)
 	m.Status = maybeStringValue((*string)(resp.Status))
-        m.Description = maybeStringValue(resp.Description)
+	m.Description = maybeStringValue(resp.Description)
 	m.TTL = maybeInt64Value(resp.Ttl)
 }
 
@@ -112,7 +111,7 @@ func (r *RecordResource) Schema(ctx context.Context, req resource.SchemaRequest,
 			},
 			"status": schema.StringAttribute{
 				MarkdownDescription: "Record status (active or inactive)",
-				Optional:            true,
+				Required:            true,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						string(client.RecordStatusActive),
@@ -128,7 +127,6 @@ func (r *RecordResource) Schema(ctx context.Context, req resource.SchemaRequest,
 				MarkdownDescription: "Record TTL",
 				Optional:            true,
 			},
-
 		},
 	}
 }

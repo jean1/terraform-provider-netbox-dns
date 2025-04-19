@@ -6,11 +6,11 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/jean1/terraform-provider-netbox-dns/client"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/jean1/terraform-provider-netbox-dns/client"
 )
 
 func toIntPointer(from *int64) *int {
@@ -88,7 +88,6 @@ func fromInt32Value(in types.Int32) *int {
 	}
 	return int32toIntPointer(in.ValueInt32Pointer())
 }
-
 
 func maybeBoolValue(in *bool) types.Bool {
 	if in == nil {

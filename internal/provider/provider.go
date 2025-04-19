@@ -6,16 +6,16 @@ package provider
 import (
 	"context"
 	"crypto/tls"
-	 _ "embed"
+	_ "embed"
 	"fmt"
 	"net/http"
 
-	"github.com/jean1/terraform-provider-netbox-dns/client"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/jean1/terraform-provider-netbox-dns/client"
 	"github.com/sethvargo/go-envconfig"
 )
 
@@ -26,7 +26,6 @@ var (
 	//go:embed provider.md
 	providerDocs string
 )
-
 
 // NetboxDNSProvider defines the provider implementation.
 type NetboxDNSProvider struct {
@@ -177,9 +176,7 @@ func (p *NetboxDNSProvider) Resources(ctx context.Context) []func() resource.Res
 }
 
 func (p *NetboxDNSProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
-	return []func() datasource.DataSource{
-		NewRecordDataSource,
-	}
+	return []func() datasource.DataSource{}
 }
 
 func New(version string) func() provider.Provider {
