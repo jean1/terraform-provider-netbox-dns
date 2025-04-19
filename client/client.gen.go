@@ -3211,7 +3211,7 @@ type PatchedWritableZoneRequest struct {
 	// BillingC Billing contact for the domain
 	BillingC     *PatchedWritableZoneRequest_BillingC `json:"billing_c,omitempty"`
 	CustomFields *map[string]interface{}              `json:"custom_fields,omitempty"`
-	DefaultTtl   *int32                                 `json:"default_ttl"`
+	DefaultTtl   *int32                               `json:"default_ttl"`
 	Description  *string                              `json:"description,omitempty"`
 
 	// DnssecPolicy DNSSEC policy to apply to the zone
@@ -3262,21 +3262,21 @@ type PatchedWritableZoneRequest struct {
 
 	// Rfc2317Prefix RFC2317 IPv4 prefix with a length of at least 25 bits
 	Rfc2317Prefix *string `json:"rfc2317_prefix"`
-	SoaExpire     *int32    `json:"soa_expire"`
-	SoaMinimum    *int32    `json:"soa_minimum"`
+	SoaExpire     *int32  `json:"soa_expire"`
+	SoaMinimum    *int32  `json:"soa_minimum"`
 
 	// SoaMname Primary nameserver for the zone
 	SoaMname   *PatchedWritableZoneRequest_SoaMname `json:"soa_mname,omitempty"`
-	SoaRefresh *int32                                 `json:"soa_refresh"`
-	SoaRetry   *int32                                 `json:"soa_retry"`
+	SoaRefresh *int32                               `json:"soa_refresh"`
+	SoaRetry   *int32                               `json:"soa_retry"`
 
 	// SoaRname Contact email for the zone
 	SoaRname  *string `json:"soa_rname,omitempty"`
 	SoaSerial *int32  `json:"soa_serial"`
 
 	// SoaSerialAuto Automatically generate the SOA serial number
-	SoaSerialAuto *bool `json:"soa_serial_auto,omitempty"`
-	SoaTtl        *int32  `json:"soa_ttl"`
+	SoaSerialAuto *bool  `json:"soa_serial_auto,omitempty"`
+	SoaTtl        *int32 `json:"soa_ttl"`
 
 	// Status * `active` - Active
 	// * `reserved` - Reserved
@@ -4920,7 +4920,7 @@ type WritableZoneRequest struct {
 	// BillingC Billing contact for the domain
 	BillingC     *WritableZoneRequest_BillingC `json:"billing_c,omitempty"`
 	CustomFields *map[string]interface{}       `json:"custom_fields,omitempty"`
-	DefaultTtl   *int32                          `json:"default_ttl"`
+	DefaultTtl   *int32                        `json:"default_ttl"`
 	Description  *string                       `json:"description,omitempty"`
 
 	// DnssecPolicy DNSSEC policy to apply to the zone
@@ -4971,21 +4971,21 @@ type WritableZoneRequest struct {
 
 	// Rfc2317Prefix RFC2317 IPv4 prefix with a length of at least 25 bits
 	Rfc2317Prefix *string `json:"rfc2317_prefix"`
-	SoaExpire     *int32    `json:"soa_expire"`
-	SoaMinimum    *int32    `json:"soa_minimum"`
+	SoaExpire     *int32  `json:"soa_expire"`
+	SoaMinimum    *int32  `json:"soa_minimum"`
 
 	// SoaMname Primary nameserver for the zone
-	SoaMname *int `json:"soa_mname,omitempty"`
-	SoaRefresh *int32                          `json:"soa_refresh"`
-	SoaRetry   *int32                          `json:"soa_retry"`
+	SoaMname   *int   `json:"soa_mname,omitempty"`
+	SoaRefresh *int32 `json:"soa_refresh"`
+	SoaRetry   *int32 `json:"soa_retry"`
 
 	// SoaRname Contact email for the zone
 	SoaRname  *string `json:"soa_rname,omitempty"`
 	SoaSerial *int32  `json:"soa_serial"`
 
 	// SoaSerialAuto Automatically generate the SOA serial number
-	SoaSerialAuto *bool `json:"soa_serial_auto,omitempty"`
-	SoaTtl        *int32  `json:"soa_ttl"`
+	SoaSerialAuto *bool  `json:"soa_serial_auto,omitempty"`
+	SoaTtl        *int32 `json:"soa_ttl"`
 
 	// Status * `active` - Active
 	// * `reserved` - Reserved
@@ -5159,7 +5159,7 @@ type Zone struct {
 	BillingC     *BriefRegistrationContact `json:"billing_c,omitempty"`
 	Created      *time.Time                `json:"created"`
 	CustomFields *map[string]interface{}   `json:"custom_fields,omitempty"`
-	DefaultTtl   *int32                      `json:"default_ttl"`
+	DefaultTtl   *int32                    `json:"default_ttl"`
 	Description  *string                   `json:"description,omitempty"`
 	Display      *string                   `json:"display,omitempty"`
 
@@ -5219,21 +5219,21 @@ type Zone struct {
 
 	// Rfc2317Prefix RFC2317 IPv4 prefix with a length of at least 25 bits
 	Rfc2317Prefix *string `json:"rfc2317_prefix"`
-	SoaExpire     *int32    `json:"soa_expire"`
-	SoaMinimum    *int32    `json:"soa_minimum"`
+	SoaExpire     *int32  `json:"soa_expire"`
+	SoaMinimum    *int32  `json:"soa_minimum"`
 
 	// SoaMname Primary nameserver for the zone
 	SoaMname   *BriefNameServer `json:"soa_mname,omitempty"`
-	SoaRefresh *int32             `json:"soa_refresh"`
-	SoaRetry   *int32             `json:"soa_retry"`
+	SoaRefresh *int32           `json:"soa_refresh"`
+	SoaRetry   *int32           `json:"soa_retry"`
 
 	// SoaRname Contact email for the zone
 	SoaRname  *string `json:"soa_rname,omitempty"`
 	SoaSerial *int32  `json:"soa_serial"`
 
 	// SoaSerialAuto Automatically generate the SOA serial number
-	SoaSerialAuto *bool `json:"soa_serial_auto,omitempty"`
-	SoaTtl        *int32  `json:"soa_ttl"`
+	SoaSerialAuto *bool  `json:"soa_serial_auto,omitempty"`
+	SoaTtl        *int32 `json:"soa_ttl"`
 
 	// Status * `active` - Active
 	// * `reserved` - Reserved
@@ -5292,7 +5292,7 @@ type ZoneRequest struct {
 	// BillingC Billing contact for the domain
 	BillingC     *ZoneRequest_BillingC   `json:"billing_c,omitempty"`
 	CustomFields *map[string]interface{} `json:"custom_fields,omitempty"`
-	DefaultTtl   *int32                    `json:"default_ttl"`
+	DefaultTtl   *int32                  `json:"default_ttl"`
 	Description  *string                 `json:"description,omitempty"`
 
 	// DnssecPolicy DNSSEC policy to apply to the zone
@@ -5343,21 +5343,21 @@ type ZoneRequest struct {
 
 	// Rfc2317Prefix RFC2317 IPv4 prefix with a length of at least 25 bits
 	Rfc2317Prefix *string `json:"rfc2317_prefix"`
-	SoaExpire     *int32    `json:"soa_expire"`
-	SoaMinimum    *int32    `json:"soa_minimum"`
+	SoaExpire     *int32  `json:"soa_expire"`
+	SoaMinimum    *int32  `json:"soa_minimum"`
 
 	// SoaMname Primary nameserver for the zone
 	SoaMname   *ZoneRequest_SoaMname `json:"soa_mname,omitempty"`
-	SoaRefresh *int32                  `json:"soa_refresh"`
-	SoaRetry   *int32                  `json:"soa_retry"`
+	SoaRefresh *int32                `json:"soa_refresh"`
+	SoaRetry   *int32                `json:"soa_retry"`
 
 	// SoaRname Contact email for the zone
 	SoaRname  *string `json:"soa_rname,omitempty"`
 	SoaSerial *int32  `json:"soa_serial"`
 
 	// SoaSerialAuto Automatically generate the SOA serial number
-	SoaSerialAuto *bool `json:"soa_serial_auto,omitempty"`
-	SoaTtl        *int32  `json:"soa_ttl"`
+	SoaSerialAuto *bool  `json:"soa_serial_auto,omitempty"`
+	SoaTtl        *int32 `json:"soa_ttl"`
 
 	// Status * `active` - Active
 	// * `reserved` - Reserved
