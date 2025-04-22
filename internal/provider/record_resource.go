@@ -34,7 +34,8 @@ type RecordResource struct {
 type RecordResourceModel struct {
 	ID          types.Int64  `tfsdk:"id"`
 	Name        types.String `tfsdk:"name"`
-	ZoneID      types.Int64  `tfsdk:"zone_id"`
+	Zone        types.String `tfsdk:"zone"`
+	View        types.String `tfsdk:"view"`
 	Type        types.String `tfsdk:"type"`
 	Value       types.String `tfsdk:"value"`
 	Status      types.String `tfsdk:"status"`
@@ -42,11 +43,17 @@ type RecordResourceModel struct {
 	TTL         types.Int64  `tfsdk:"ttl"`
 }
 
-func (m *RecordResourceModel) ToAPIModel(ctx context.Context, diags diag.Diagnostics) client.WritableRecordRequest {
+// Convert internal representation RecordResourceModel "m" to API request "p"
+func (m *RecordResourceModel) ToAPIModel(ctx context.Context, cl *client.Client, diags diag.Diagnostics) client.WritableRecordRequest {
 	p := client.WritableRecordRequest{}
 
 	p.Name = m.Name.ValueString()
-	p.Zone = *fromInt64Value(m.ZoneID)
+
+	// Convert zone and view to zone_id
+	var zone_id = GetZoneId(ctx, cl, diags, m.Zone.ValueString(), m.View.ValueString())
+	if !diags.HasError() {
+		p.Zone = zone_id
+	}
 
 	recordtype := client.WritableRecordRequestType(m.Type.ValueString())
 	p.Type = recordtype
@@ -62,10 +69,12 @@ func (m *RecordResourceModel) ToAPIModel(ctx context.Context, diags diag.Diagnos
 	return p
 }
 
+// Receive API response "p" and store into internal representation RecordResourceModel "m"
 func (m *RecordResourceModel) FillFromAPIModel(ctx context.Context, resp *client.Record, diags diag.Diagnostics) {
 	m.ID = maybeInt64Value(resp.Id)
 	m.Name = maybeStringValue(&resp.Name)
-	m.ZoneID = maybeInt64Value(resp.Zone.Id)
+	m.Zone = maybeStringValue(&resp.Zone.Name)
+	m.View = maybeStringValue(&resp.Zone.View.Name)
 	m.Type = maybeStringValue((*string)(&resp.Type))
 	m.Value = maybeStringValue(&resp.Value)
 	m.Status = maybeStringValue((*string)(resp.Status))
@@ -94,8 +103,12 @@ func (r *RecordResource) Schema(ctx context.Context, req resource.SchemaRequest,
 				MarkdownDescription: "DNS Record name",
 				Required:            true,
 			},
-			"zone_id": schema.Int64Attribute{
-				MarkdownDescription: "DNS Zone id",
+			"zone": schema.StringAttribute{
+				MarkdownDescription: "DNS Zone name",
+				Required:            true,
+			},
+			"view": schema.StringAttribute{
+				MarkdownDescription: "DNS View name",
 				Required:            true,
 			},
 			"type": schema.StringAttribute{
@@ -141,7 +154,7 @@ func (r *RecordResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
-	params := data.ToAPIModel(ctx, resp.Diagnostics)
+	params := data.ToAPIModel(ctx, r.client, resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -219,7 +232,7 @@ func (r *RecordResource) Update(ctx context.Context, req resource.UpdateRequest,
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	params := data.ToAPIModel(ctx, resp.Diagnostics)
+	params := data.ToAPIModel(ctx, r.client, resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -274,4 +287,46 @@ func (r *RecordResource) Delete(ctx context.Context, req resource.DeleteRequest,
 
 func (r *RecordResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	importByInt64ID(ctx, req, resp)
+}
+
+func GetZoneId(ctx context.Context, cl *client.Client, diags diag.Diagnostics, zone string, view string) int {
+
+	var params client.PluginsNetboxDnsZonesListParams
+
+	zonenames := []string{zone}
+	params.Name = &zonenames
+
+	viewnames := []string{view}
+	params.View = &viewnames
+
+	HTTPReq, err := client.NewPluginsNetboxDnsZonesListRequest(cl.Server, &params)
+	if err != nil {
+		diags.AddError("Client Error", fmt.Sprintf("failed to create zone list request: %s", err))
+		return 0
+	}
+	var httpRes *http.Response
+	httpRes, err = doPlainReq(ctx, HTTPReq, cl)
+	if err != nil {
+		diags.AddError("Client Error", fmt.Sprintf("failed to retrieve zones: %s", err))
+		return 0
+	}
+	var res *client.PluginsNetboxDnsZonesListResponse
+	res, err = client.ParsePluginsNetboxDnsZonesListResponse(httpRes)
+	if err != nil {
+		diags.AddError("Client Error", fmt.Sprintf("failed to parse Zones: %s", err))
+		return 0
+	}
+	if res.JSON200 == nil {
+		diags.AddError("Client Error", httpError(httpRes, res.Body))
+		return 0
+	}
+
+	var found = res.JSON200.Results
+	if len(found) < 1 {
+		diags.AddError("Parameter Error", fmt.Sprintf("No zone found for zone='%s' and view='%s'", zone, view))
+		return 0
+	}
+
+	zone_id := *(found[0].Id)
+	return zone_id
 }
